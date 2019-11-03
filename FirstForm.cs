@@ -22,18 +22,37 @@ namespace HTMLZoomTool {
         }
 
         private void FirstForm_Load(object sender, EventArgs e) {
-            SettingByConfig();
-            
+            try {
+                SettingByConfig();
+            }
+            catch (Exception ex) {
+                MessageBox.Show(ex.Message + ex.StackTrace);
+            }
+                    
         }
 
         //依照使用者設定初始化整個版面
         private void SettingByConfig() {
-            urlCheckBox.Checked = UserConfigManager.GetConfigValueByKey(ConfigType.UseUrl);
+            
+            urlCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.UseUrl);
             //根據有沒有check來變換其他控制項之Enable
             UrlCheckBox_CheckedChanged(new Object(), new EventArgs());
 
-            youtubeRadioButton.Checked = UserConfigManager.GetConfigValueByKey(ConfigType.IsYouTubeChecked);
-            imgRadioButton.Checked = !UserConfigManager.GetConfigValueByKey(ConfigType.IsYouTubeChecked);
+            youtubeRadioButton.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsYouTubeChecked);
+            imgRadioButton.Checked = !(bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsYouTubeChecked);
+
+            rightSideRadioButton.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsPreViewAtRight);
+            downRadioButton.Checked = !(bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsPreViewAtRight);
+
+            //Proview向上偏移
+            UpDownOffsetUp.Value = (int)UserConfigManager.GetConfigValueByKey(ConfigType.UpOffet);
+
+            zoomComboBox.Text = UserConfigManager.GetConfigValueByKey(ConfigType.ZoomPercentage).ToString() + "%";
+
+            sourcePreviewCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsBeforePreviewChecked);
+            resultPreviewCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsAfterPreviewChecked);
+            centerCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsCenterChecked);
+
         }
 
         public void ShowPreview(ref Preview preview, string formName,string htmlText) {
@@ -46,22 +65,26 @@ namespace HTMLZoomTool {
                 
                 //寫入Document並更新網頁
                 preview.WriteWebBrowserDocumentAndRefresh(htmlText);
-                preview.Show();                
             }
             else {                
                 //寫入並更新html
-                preview.WriteWebBrowserDocumentAndRefresh(htmlText);
-
-                preview.Show();
+                preview.WriteWebBrowserDocumentAndRefresh(htmlText);                                
                 //將視窗置頂
                 preview.Focus();                                
             }
 
-            if (formName == "sourcePreview") {
+            //------------重設顯示位置的時機
+            if (formName == "sourcePreview") {//source直接重設，最後他會在有result的情況下也順便重設顯示位置
                 //重設顯示位置
                 ResetFormPosition(ref preview);
             }
-           
+            else {//如果是result,只有在source沒有被顯示的情況下重置為source原本的位置
+                if (!sourcePreviewCheckBox.Checked) {
+                    //重設顯示位置
+                    ResetFormPosition(ref preview);
+                }
+            }            
+
         }
 
         public void ResetFormPosition(ref Preview preview) {
@@ -71,9 +94,13 @@ namespace HTMLZoomTool {
                 if (preview.formName == "sourcePreview") {
                     preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - PreviewUpOffset);
                 }
-
-                else {
-                    preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - PreviewUpOffset + sourcePreview.Size.Height);
+                else {//resultPreview
+                    if (sourcePreviewCheckBox.Checked) {
+                        preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - PreviewUpOffset + sourcePreview.Size.Height);
+                    }
+                    else {//取代source原本的位置
+                        preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - PreviewUpOffset);
+                    }
                 }
             }
 
@@ -82,9 +109,14 @@ namespace HTMLZoomTool {
                 if (preview.formName == "sourcePreview") {
                     preview.Location = new Point(this.Location.X, this.Location.Y + this.Size.Height);
                 }
-
-                else {
-                    preview.Location = new Point(this.Location.X + sourcePreview.Size.Width, this.Location.Y + this.Size.Height);
+                else {//resultPreview
+                    if (sourcePreviewCheckBox.Checked) {
+                        preview.Location = new Point(this.Location.X + sourcePreview.Size.Width, this.Location.Y + this.Size.Height);
+                    }
+                    else {//取代source原本的位置
+                        preview.Location = new Point(this.Location.X, this.Location.Y + this.Size.Height);
+                    }
+                    
                     
                 }
             }
@@ -105,19 +137,9 @@ namespace HTMLZoomTool {
         }
 
 
-        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e) {
+        
 
-        }
-
-        private void CheckBox3_CheckedChanged(object sender, EventArgs e) {
-
-        }
-
-        private void CheckBox1_CheckedChanged(object sender, EventArgs e) {
-
-        }
-
-        private void TransferHTML() {   
+        private void ConvertHTMLAndShow() {   
             //將ResultHTML變成SourceHTML一設定改變的值            
             ResultHTML.Text = SourceHTML.Text;
 
@@ -127,14 +149,12 @@ namespace HTMLZoomTool {
             }
 
             //預覽使用
-            string sourceHTMLString = SourceHTML.Text.Replace('\"', '\'');
-            string resultHTMLString = ResultHTML.Text.Replace('\"', '\'');
-
-            //ShowPreview(ref sourcePreview, "sourcePreview", sourceHTMLString);
-            //ShowPreview(ref resultPreview, "resultPreview", resultHTMLString);
-
-            ShowPreview(ref sourcePreview, "sourcePreview", SourceHTML.Text);
-            ShowPreview(ref resultPreview, "resultPreview", ResultHTML.Text);
+            if (sourcePreviewCheckBox.Checked) {
+                ShowPreview(ref sourcePreview, "sourcePreview", SourceHTML.Text);
+            }
+            if (resultPreviewCheckBox.Checked) {
+                ShowPreview(ref resultPreview, "resultPreview", ResultHTML.Text);
+            }
         }
 
 
@@ -143,17 +163,27 @@ namespace HTMLZoomTool {
             //設定位移單位
             PreviewUpOffset = (int)UpDownOffsetUp.Value;
 
-            TransferHTML();
+            ClosePreviewFormIfExist();
+            ConvertHTMLAndShow();
+        }
+
+        private void ClosePreviewFormIfExist() {
+            if (sourcePreview != null && !sourcePreview.IsDisposed)
+                sourcePreview.Close();
+            if (resultPreview != null && !resultPreview.IsDisposed) {
+                resultPreview.Close();
+            }
         }
                 
 
         private void CleanButton_Click(object sender, EventArgs e) {
            
             SourceHTML.Text = string.Empty;
+            ClosePreviewFormIfExist();
         }
 
         private void UpDownOffsetUp_ValueChanged(object sender, EventArgs e) {
-
+            UserConfigManager.SetAndWriteConfig(ConfigType.UpOffet, (int)UpDownOffsetUp.Value); 
         }
 
         //滑鼠點擊則全選
@@ -161,23 +191,43 @@ namespace HTMLZoomTool {
             ResultHTML.SelectAll();
         }
 
+        //全選URL
+        private void UrlRichTextBox_MouseClick(object sender, MouseEventArgs e) {
+            urlRichTextBox.SelectAll();
+        }
+
+        private void ZoomComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+            string tempString = zoomComboBox.Text;
+            int zoomPercentageInt =  Convert.ToInt32(tempString.Split('%')[0]);
+
+            UserConfigManager.SetAndWriteConfig(ConfigType.ZoomPercentage, zoomPercentageInt);
+        }
+
+        private void sourcePreviewCheckBox_CheckedChanged(object sender, EventArgs e) {
+            UserConfigManager.SetAndWriteConfig(ConfigType.IsBeforePreviewChecked, sourcePreviewCheckBox.Checked);
+        }
+
+        private void resultPreviewCheckBox_CheckedChanged(object sender, EventArgs e) {
+            UserConfigManager.SetAndWriteConfig(ConfigType.IsAfterPreviewChecked, resultPreviewCheckBox.Checked);
+        }
+
+        private void CenterCheckBox_CheckedChanged(object sender, EventArgs e) {
+            UserConfigManager.SetAndWriteConfig(ConfigType.IsCenterChecked, centerCheckBox.Checked);
+        }
+
+        private void RightSideRadioButton_CheckedChanged(object sender, EventArgs e) {
+            UserConfigManager.SetAndWriteConfig(ConfigType.IsPreViewAtRight, rightSideRadioButton.Checked);
+        }
+
         //預覽視窗在下方時，停用位移
         private void downRadioButton_CheckedChange(object sender, EventArgs e) {
             UpDownOffsetUp.Enabled = !downRadioButton.Checked;//不選時才會打開
         }
 
-        private void Label9_Click(object sender, EventArgs e) {
-
-        }
-
         private void UrlRichTextBox_TextChanged(object sender, EventArgs e) {
 
         }
-
-        //全選URL
-        private void UrlRichTextBox_MouseClick(object sender, MouseEventArgs e) {
-            urlRichTextBox.SelectAll();
-        }
+       
 
         private void UrlCheckBox_CheckedChanged(object sender, EventArgs e) {
             bool isChecked = urlCheckBox.Checked;
@@ -196,8 +246,8 @@ namespace HTMLZoomTool {
 
         private void ImgRadioButton_CheckedChanged(object sender, EventArgs e) {
             
-            if (imgRadioButton.Checked) {
-                if (!UserConfigManager.GetConfigValueByKey(ConfigType.DontRemindImgInfo)) {
+            if (imgRadioButton.Checked && imgRadioButton.Enabled) {
+                if (!(bool)UserConfigManager.GetConfigValueByKey(ConfigType.DontRemindImgInfo)) {
                     FirstForm_ImgCheckInfo firstForm_ImgCheckInfo = new FirstForm_ImgCheckInfo();
 
                     firstForm_ImgCheckInfo.StartPosition = FormStartPosition.Manual;//手動設定跳窗初始位置
@@ -220,5 +270,6 @@ namespace HTMLZoomTool {
         private void YoutubeRadioButton_CheckedChanged(object sender, EventArgs e) {
             UserConfigManager.SetAndWriteConfig(ConfigType.IsYouTubeChecked, youtubeRadioButton.Checked);
         }
+        
     }
 }

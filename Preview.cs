@@ -52,6 +52,9 @@ namespace HTMLZoomTool {
         
         //Document準備完成後 (這樣寫或許不是很好，因為影片會跳轉兩次)
         private void WebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
+
+            //Loading 完成才Show
+            this.Show();
             
             WebBrowser webBrowserObject = (WebBrowser)sender;
             //如果此WebBrowser尚未Ready，則DocumentCompleted不生效，直接return

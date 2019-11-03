@@ -132,7 +132,7 @@
             this.zoomComboBox.Size = new System.Drawing.Size(121, 20);
             this.zoomComboBox.TabIndex = 11;
             this.zoomComboBox.Text = "100%";
-            this.zoomComboBox.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
+            this.zoomComboBox.SelectedIndexChanged += new System.EventHandler(this.ZoomComboBox_SelectedIndexChanged);
             // 
             // resultPreviewCheckBox
             // 
@@ -145,7 +145,7 @@
             this.resultPreviewCheckBox.TabIndex = 12;
             this.resultPreviewCheckBox.Text = "轉換後預覽視窗";
             this.resultPreviewCheckBox.UseVisualStyleBackColor = true;
-            this.resultPreviewCheckBox.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
+            this.resultPreviewCheckBox.CheckedChanged += new System.EventHandler(this.resultPreviewCheckBox_CheckedChanged);
             // 
             // startButton
             // 
@@ -166,6 +166,7 @@
             this.centerCheckBox.TabIndex = 14;
             this.centerCheckBox.Text = "是否置中(YouTube)";
             this.centerCheckBox.UseVisualStyleBackColor = true;
+            this.centerCheckBox.CheckedChanged += new System.EventHandler(this.CenterCheckBox_CheckedChanged);
             // 
             // sourcePreviewCheckBox
             // 
@@ -178,7 +179,7 @@
             this.sourcePreviewCheckBox.TabIndex = 15;
             this.sourcePreviewCheckBox.Text = "預覽轉換前畫面";
             this.sourcePreviewCheckBox.UseVisualStyleBackColor = true;
-            this.sourcePreviewCheckBox.CheckedChanged += new System.EventHandler(this.CheckBox3_CheckedChanged);
+            this.sourcePreviewCheckBox.CheckedChanged += new System.EventHandler(this.sourcePreviewCheckBox_CheckedChanged);
             // 
             // label4
             // 
@@ -214,6 +215,7 @@
             this.rightSideRadioButton.TabStop = true;
             this.rightSideRadioButton.Text = "主視窗右側";
             this.rightSideRadioButton.UseVisualStyleBackColor = true;
+            this.rightSideRadioButton.CheckedChanged += new System.EventHandler(this.RightSideRadioButton_CheckedChanged);
             // 
             // downRadioButton
             // 
@@ -324,7 +326,6 @@
             this.label9.Size = new System.Drawing.Size(152, 20);
             this.label9.TabIndex = 27;
             this.label9.Text = "YouTube /圖片網址";
-            this.label9.Click += new System.EventHandler(this.Label9_Click);
             // 
             // urlRichTextBox
             // 
