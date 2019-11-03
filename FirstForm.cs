@@ -55,6 +55,137 @@ namespace HTMLZoomTool {
 
         }
 
+        //主要的轉換Method
+        private void ConvertHTMLAndShow() {
+            //取得要縮放的百分比
+            int zoom = Convert.ToInt32(zoomComboBox.Text.Split('%')[0]);
+
+            string tempSourceHTML = string.Empty;
+
+            //如果有勾選網址轉換
+            if (urlCheckBox.Checked) {
+                if (youtubeRadioButton.Checked) {
+                    tempSourceHTML = YoutubeURL_ToHTML(urlRichTextBox.Text);
+                }
+                else {//image
+                    tempSourceHTML = ImageURL_ToHTML(urlRichTextBox.Text);
+                }
+            }
+            else {//一般HTML to HTML
+                tempSourceHTML = SourceHTML.Text;
+            }
+
+            //先置換所有 " 為 '
+            tempSourceHTML = tempSourceHTML.Replace('\"', '\'');
+
+            //將ResultHTML變成SourceHTML縮放後的值
+            if (!string.IsNullOrEmpty(tempSourceHTML)) {
+                ResultHTML.Text = ZoomHTML(tempSourceHTML, zoom);
+            }
+            else {
+                ResultHTML.Text = string.Empty;
+            }                
+
+            //置中語法
+            if (centerCheckBox.Checked) {
+                ResultHTML.Text = "<p align = 'center'>" + ResultHTML.Text + "</p>";
+            }
+
+            //預覽使用
+            if (sourcePreviewCheckBox.Checked) {
+                ShowPreview(ref sourcePreview, "sourcePreview", SourceHTML.Text);
+            }
+            if (resultPreviewCheckBox.Checked) {
+                ShowPreview(ref resultPreview, "resultPreview", ResultHTML.Text);
+            }
+        }
+
+        private string YoutubeURL_ToHTML(string url) {
+            //確定有youtube後開始置換
+            if (url.IndexOf("youtube") != -1) {
+                string youtubeCode = url.Substring(url.IndexOf("=")+1).Split('&')[0];
+                
+                url =
+                    "<iframe width = '560' height = '315' src = 'https://www.youtube.com/embed/" +
+                    youtubeCode + 
+                    "' frameborder = '0' allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen ></iframe> ";
+
+            }
+            else {
+                MessageBox.Show("請再次確認為是否為合法的YouTube網址");
+                url = string.Empty;
+            }
+            return url;
+        }
+
+        private string ImageURL_ToHTML(string url) {
+
+            //確定有http後開始置換
+            if (url.IndexOf("http") != -1) {
+                url =
+                    "<img src = '" +
+                    url +
+                    "' width = '640' height = '480' /> ";
+
+            }
+            else {
+                MessageBox.Show("請再次確認為是否為合法的網址");
+                url = string.Empty;
+            }
+            return url;
+        }
+
+        //使用zoom的百分比來縮放HTML
+        private string ZoomHTML(string originHTML, int zoom) {
+            
+            //確定有width及height後開始置換
+            if (originHTML.IndexOf("width") != -1 && originHTML.IndexOf("height") != -1) {
+
+                #region width
+                int startIndex = originHTML.IndexOf("width");
+                //尋找左邊的'
+                int leftIndex = originHTML.IndexOf("'", startIndex);
+                int rightIndex = originHTML.IndexOf("'", leftIndex + 1);
+
+                string originWidthString = originHTML.Substring(leftIndex + 1, rightIndex - (leftIndex + 1));
+                int originInt = Convert.ToInt32(originWidthString);
+
+                float zoomfloat = originInt * ((float)zoom / 100);
+                int zoomInt = (int)zoomfloat;
+
+                //更改為縮放後的width
+                originHTML =
+                    originHTML.Substring(0, leftIndex) +
+                    "'" + zoomInt.ToString() + "'" +
+                    originHTML.Substring(rightIndex + 1);
+                #endregion
+
+                #region height
+                startIndex = originHTML.IndexOf("height");
+                //尋找左邊的'
+                leftIndex = originHTML.IndexOf("'", startIndex);
+                rightIndex = originHTML.IndexOf("'", leftIndex + 1);
+
+                string originHeightString = originHTML.Substring(leftIndex + 1, rightIndex - (leftIndex + 1));
+                originInt = Convert.ToInt32(originHeightString);
+
+                zoomfloat = originInt * ((float)zoom / 100);
+                zoomInt = (int)zoomfloat;
+
+                //更改為縮放後的height
+                originHTML =
+                    originHTML.Substring(0, leftIndex) +
+                    "'" + zoomInt.ToString() + "'" +
+                    originHTML.Substring(rightIndex + 1);
+                #endregion
+            }
+            else {
+                MessageBox.Show("請再次確認\"width\"及\"height\"是否在語法中:\n" + originHTML);
+                originHTML = string.Empty;
+            }
+            return originHTML;
+        }
+
         public void ShowPreview(ref Preview preview, string formName,string htmlText) {
 
             //加上網頁tag，須注意meta http-equiv必須有值，才能夠顯示影片及圖片
@@ -119,44 +250,20 @@ namespace HTMLZoomTool {
                     
                     
                 }
-            }
-                 
+            }                 
 
         }
 
-        //如果主要視窗移動，子視窗移動
-        private void FirstForm_LocationChange(object sender, EventArgs e) {
-            if (sourcePreview != null && !sourcePreview.IsDisposed) {
-                ResetFormPosition(ref sourcePreview);
-            }
-
+        //關閉預覽畫面，如果存在的話
+        private void ClosePreviewFormIfExist() {
+            if (sourcePreview != null && !sourcePreview.IsDisposed)
+                sourcePreview.Close();
             if (resultPreview != null && !resultPreview.IsDisposed) {
-                ResetFormPosition(ref resultPreview);
-            }         
-
-        }
-
-
-        
-
-        private void ConvertHTMLAndShow() {   
-            //將ResultHTML變成SourceHTML一設定改變的值            
-            ResultHTML.Text = SourceHTML.Text;
-
-            //置中語法
-            if (centerCheckBox.Checked) {
-                ResultHTML.Text = "<p align = 'center'>" + ResultHTML.Text + "</p>";
-            }
-
-            //預覽使用
-            if (sourcePreviewCheckBox.Checked) {
-                ShowPreview(ref sourcePreview, "sourcePreview", SourceHTML.Text);
-            }
-            if (resultPreviewCheckBox.Checked) {
-                ShowPreview(ref resultPreview, "resultPreview", ResultHTML.Text);
+                resultPreview.Close();
             }
         }
 
+        #region ClickEvent ====================================================
 
         //開始轉換按鈕
         private void StartButton_Click(object sender, EventArgs e) {
@@ -167,14 +274,6 @@ namespace HTMLZoomTool {
             ConvertHTMLAndShow();
         }
 
-        private void ClosePreviewFormIfExist() {
-            if (sourcePreview != null && !sourcePreview.IsDisposed)
-                sourcePreview.Close();
-            if (resultPreview != null && !resultPreview.IsDisposed) {
-                resultPreview.Close();
-            }
-        }
-                
 
         private void CleanButton_Click(object sender, EventArgs e) {
            
@@ -194,6 +293,23 @@ namespace HTMLZoomTool {
         //全選URL
         private void UrlRichTextBox_MouseClick(object sender, MouseEventArgs e) {
             urlRichTextBox.SelectAll();
+        }
+
+        #endregion ====================================================
+
+
+        #region ChangeEvent ===================================================
+
+        //如果主要視窗移動，子視窗移動
+        private void FirstForm_LocationChange(object sender, EventArgs e) {
+            if (sourcePreview != null && !sourcePreview.IsDisposed) {
+                ResetFormPosition(ref sourcePreview);
+            }
+
+            if (resultPreview != null && !resultPreview.IsDisposed) {
+                ResetFormPosition(ref resultPreview);
+            }
+
         }
 
         private void ZoomComboBox_SelectedIndexChanged(object sender, EventArgs e) {
@@ -270,6 +386,8 @@ namespace HTMLZoomTool {
         private void YoutubeRadioButton_CheckedChanged(object sender, EventArgs e) {
             UserConfigManager.SetAndWriteConfig(ConfigType.IsYouTubeChecked, youtubeRadioButton.Checked);
         }
-        
+
+        #endregion ==============================================================
+
     }
 }

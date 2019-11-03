@@ -63,7 +63,7 @@
             this.SourceHTML.Name = "SourceHTML";
             this.SourceHTML.Size = new System.Drawing.Size(423, 128);
             this.SourceHTML.TabIndex = 0;
-            this.SourceHTML.Text = resources.GetString("SourceHTML.Text");
+            this.SourceHTML.Text = "";
             // 
             // label1
             // 
