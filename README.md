@@ -12,7 +12,7 @@ This is a simple tool to help you zoom in and out images or YouTube video in HTM
 
 ## Download
 
-You can get the last version [here](https://github.com/pat31718/HTMLZoomTool/releases).
+Language:<br>Traditional Chinese Version Only.<br><br>You can get the last version [here](https://github.com/pat31718/HTMLZoomTool/releases).
 
 ## Usage
 
