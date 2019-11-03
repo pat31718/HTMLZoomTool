@@ -80,9 +80,11 @@ namespace HTMLZoomTool {
 
             //將ResultHTML變成SourceHTML縮放後的值
             if (!string.IsNullOrEmpty(tempSourceHTML)) {
+                SourceHTML.Text = tempSourceHTML;
                 ResultHTML.Text = ZoomHTML(tempSourceHTML, zoom);
             }
             else {
+                SourceHTML.Text = string.Empty;
                 ResultHTML.Text = string.Empty;
             }                
 
@@ -91,13 +93,16 @@ namespace HTMLZoomTool {
                 ResultHTML.Text = "<p align = 'center'>" + ResultHTML.Text + "</p>";
             }
 
-            //預覽使用
-            if (sourcePreviewCheckBox.Checked) {
-                ShowPreview(ref sourcePreview, "sourcePreview", SourceHTML.Text);
-            }
-            if (resultPreviewCheckBox.Checked) {
-                ShowPreview(ref resultPreview, "resultPreview", ResultHTML.Text);
-            }
+            //預覽畫面必須有結果才會更新
+            if (ResultHTML.Text != string.Empty) {
+                
+                if (sourcePreviewCheckBox.Checked) {
+                    ShowPreview(ref sourcePreview, "sourcePreview", SourceHTML.Text);
+                }
+                if (resultPreviewCheckBox.Checked) {
+                    ShowPreview(ref resultPreview, "resultPreview", ResultHTML.Text);
+                }
+            }            
         }
 
         private string YoutubeURL_ToHTML(string url) {
