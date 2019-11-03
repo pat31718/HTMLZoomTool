@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HTMLZoomTool {
+
+    //讓JavaScript支援
+    [System.Runtime.InteropServices.ComVisibleAttribute(true)]
     public partial class Preview : Form {
 
         private WebBrowser webBrowser;
@@ -19,6 +22,10 @@ namespace HTMLZoomTool {
         private int widthOffset = 30;
         private int heightOffset = 56;
 
+        //預設的視窗長寬
+        private static int defaultWidth = 199;
+        private static int defaultHeight = 141;
+        private static Size defaultSize = new Size(defaultWidth, defaultHeight);
 
         public Preview(string formName, FirstForm firstForm) {
             InitializeComponent();
@@ -32,43 +39,40 @@ namespace HTMLZoomTool {
             this.formName = formName;
             //webBrowser.ScriptErrorsSuppressed = true;
         }
-
-        //設置 DocumentText
-        public void SetWebBrowserDocumentText(string documentText) {
-            if (webBrowser.Document == null) {
-                webBrowser.DocumentText = documentText;
-            }
-            else {
-                webBrowser.Document.Body.InnerText = documentText;
-            }            
-            //重設比例
-            //ResizeWebBrowser();
-        }
-
+        
         //使用 method 寫入 Document 並更新
         public void WriteWebBrowserDocumentAndRefresh(string documentText) {
-            //初始化
+            //初始化為空白頁
             webBrowser.Navigate("about:blank");
             //寫檔
-            webBrowser.Document.Write(documentText);            
-
+            webBrowser.Document.Write(documentText);
             //更新
             webBrowser.Refresh();
         }
         
-        //Document準備完成後
+        //Document準備完成後 (這樣寫或許不是很好，因為影片會跳轉兩次)
         private void WebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
+            
+            WebBrowser webBrowserObject = (WebBrowser)sender;
+            //如果此WebBrowser尚未Ready，則DocumentCompleted不生效，直接return
+            if (webBrowserObject.ReadyState != WebBrowserReadyState.Complete)
+                return;
+                        
             //重設比例
             ResizeWebBrowser();
+            Console.WriteLine("completed:" + webBrowserObject.DocumentText);
         }
 
         //重新設定長寬比例
-        private void ResizeWebBrowser() {
+        public void ResizeWebBrowser() {
+            webBrowser.Size = defaultSize;//重設長寬
             webBrowser.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width, webBrowser.Document.Body.ScrollRectangle.Height);
+
+            this.Size = defaultSize;//重設長寬
             this.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width + widthOffset, webBrowser.Document.Body.ScrollRectangle.Height + heightOffset);
 
-            //如果原始碼視窗的已經跑完了，就重置result視窗的位置
-            if (this.formName == "sourcePreview") {
+            //如果sourecePreview長寬設置完了，且resultPreview存在，重設resultPreviw的位置
+            if (this.formName == "sourcePreview" && FirstForm.resultPreview != null && !FirstForm.resultPreview.IsDisposed) {
                 firstForm.ResetFormPosition(ref FirstForm.resultPreview);
             }
 
