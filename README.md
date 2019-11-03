@@ -18,9 +18,10 @@ You can get the last version [here](https://github.com/pat31718/HTMLZoomTool/rel
 
 ![Preview](https://i.imgur.com/ZE1Lhow.png)
 
-1. Add the URL or HTML syntax you want to transfer into the text box.
-2. Click the "轉換" button.
-3. Done. Now you have the HTML syntax converted.
+1. Download and unzip the .zip file at anywhere you want. And then click your mouse twice to run "HTMLZoomTool.exe".
+2. Add the URL or HTML syntax you want to transfer into the text box.
+3. Click the "轉換" button.
+4. Done. Now you have the HTML syntax converted.
 
 
 ## Licence
