@@ -172,43 +172,50 @@ namespace HTMLZoomTool
             if (originHTML.IndexOf("width") != -1 && originHTML.IndexOf("height") != -1)
             {
 
-                #region width
-                int startIndex = originHTML.IndexOf("width");
-                //尋找左邊的'
-                int leftIndex = originHTML.IndexOf("'", startIndex);
-                int rightIndex = originHTML.IndexOf("'", leftIndex + 1);
+                try {
 
-                string originWidthString = originHTML.Substring(leftIndex + 1, rightIndex - (leftIndex + 1));
-                int originInt = Convert.ToInt32(originWidthString);
+                    #region width
+                    int startIndex = originHTML.IndexOf("width");
+                    //尋找左邊的'
+                    int leftIndex = originHTML.IndexOf("'", startIndex);
+                    int rightIndex = originHTML.IndexOf("'", leftIndex + 1);
 
-                float zoomfloat = originInt * ((float)zoom / 100);
-                int zoomInt = (int)zoomfloat;
+                    string originWidthString = originHTML.Substring(leftIndex + 1, rightIndex - (leftIndex + 1));
+                    float originFloat = Convert.ToSingle(originWidthString);
 
-                //更改為縮放後的width
-                originHTML =
-                    originHTML.Substring(0, leftIndex) +
-                    "'" + zoomInt.ToString() + "'" +
-                    originHTML.Substring(rightIndex + 1);
-                #endregion
+                    float zoomfloat = originFloat * ((float)zoom / 100);
+                    int zoomInt = Convert.ToInt32(zoomfloat);
 
-                #region height
-                startIndex = originHTML.IndexOf("height");
-                //尋找左邊的'
-                leftIndex = originHTML.IndexOf("'", startIndex);
-                rightIndex = originHTML.IndexOf("'", leftIndex + 1);
+                    //更改為縮放後的width
+                    originHTML =
+                        originHTML.Substring(0, leftIndex) +
+                        "'" + zoomInt.ToString() + "'" +
+                        originHTML.Substring(rightIndex + 1);
+                    #endregion
 
-                string originHeightString = originHTML.Substring(leftIndex + 1, rightIndex - (leftIndex + 1));
-                originInt = Convert.ToInt32(originHeightString);
+                    #region height
+                    startIndex = originHTML.IndexOf("height");
+                    //尋找左邊的'
+                    leftIndex = originHTML.IndexOf("'", startIndex);
+                    rightIndex = originHTML.IndexOf("'", leftIndex + 1);
 
-                zoomfloat = originInt * ((float)zoom / 100);
-                zoomInt = (int)zoomfloat;
+                    string originHeightString = originHTML.Substring(leftIndex + 1, rightIndex - (leftIndex + 1));
+                    originFloat = Convert.ToSingle(originHeightString);
 
-                //更改為縮放後的height
-                originHTML =
-                    originHTML.Substring(0, leftIndex) +
-                    "'" + zoomInt.ToString() + "'" +
-                    originHTML.Substring(rightIndex + 1);
-                #endregion
+                    zoomfloat = originFloat * ((float)zoom / 100);
+                    zoomInt = Convert.ToInt32(zoomfloat);
+
+                    //更改為縮放後的height
+                    originHTML =
+                        originHTML.Substring(0, leftIndex) +
+                        "'" + zoomInt.ToString() + "'" +
+                        originHTML.Substring(rightIndex + 1);
+                    #endregion
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(ex.Message + ex.StackTrace);
+                }
+
             }
             else
             {
@@ -230,8 +237,7 @@ namespace HTMLZoomTool
                 preview = new Preview(formName, this);
             }
 
-            //依據不同的preview重設顯示位置
-            preview.StartPosition = FormStartPosition.Manual;
+            //依據不同的preview重設顯示位置            
             ResetFormPosition(ref preview);
 
             //寫入Document並更新網頁

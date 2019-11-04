@@ -19,12 +19,12 @@ namespace HTMLZoomTool {
         public string formName;
 
         //用來讓網頁顯示起來更寬一點，不然會有卷軸
-        private int widthOffset = 30;
-        private int heightOffset = 56;
-
+        private static int widthOffset = 41;
+        private static int heightOffset = 55;
+        
         //預設的視窗長寬
-        private static int defaultWidth = 199;
-        private static int defaultHeight = 141;
+        private static int defaultWidth = 50;
+        private static int defaultHeight = 50;
         private static Size defaultSize = new Size(defaultWidth, defaultHeight);
 
         public Preview(string formName, FirstForm firstForm) {
@@ -37,7 +37,10 @@ namespace HTMLZoomTool {
             //設定此視窗名稱
             this.Text = formName;
             this.formName = formName;
-            //webBrowser.ScriptErrorsSuppressed = true;
+
+            //Form的一些設定
+            this.StartPosition = FormStartPosition.Manual;//初始位置可被調整
+            
         }
         
         //使用 method 寫入 Document 並更新
@@ -70,8 +73,9 @@ namespace HTMLZoomTool {
 
         //重新設定預覽視窗長寬比例
         public void ResizeWebBrowser() {
-            webBrowser.Size = defaultSize;//重設WebBrowser長寬
-            webBrowser.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width, webBrowser.Document.Body.ScrollRectangle.Height);
+
+            //webBrowser.Size = defaultSize;//重設WebBrowser長寬
+            //webBrowser.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width , webBrowser.Document.Body.ScrollRectangle.Height);
 
             this.Size = defaultSize;//重設視窗長寬
             this.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width + widthOffset, webBrowser.Document.Body.ScrollRectangle.Height + heightOffset);
