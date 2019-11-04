@@ -15,9 +15,10 @@ namespace HTMLZoomTool
         public static Preview sourcePreview;
         public static Preview resultPreview;
 
-        //顯示位置上移
-        private int PreviewUpOffset = 0;
-
+        //固定的字串
+        public static string sourcePreviewString = "sourcePreview";
+        public static string resultPreviewString = "resultPreview";
+        
         public FirstForm()
         {
             InitializeComponent();
@@ -113,11 +114,11 @@ namespace HTMLZoomTool
 
                 if (sourcePreviewCheckBox.Checked)
                 {
-                    ShowPreview(ref sourcePreview, "sourcePreview", SourceHTML.Text);
+                    ShowPreview(ref sourcePreview, sourcePreviewString, SourceHTML.Text);
                 }
                 if (resultPreviewCheckBox.Checked)
                 {
-                    ShowPreview(ref resultPreview, "resultPreview", ResultHTML.Text);
+                    ShowPreview(ref resultPreview, resultPreviewString, ResultHTML.Text);
                 }
             }
         }
@@ -230,6 +231,7 @@ namespace HTMLZoomTool
             }
 
             //依據不同的preview重設顯示位置
+            preview.StartPosition = FormStartPosition.Manual;
             ResetFormPosition(ref preview);
 
             //寫入Document並更新網頁
@@ -242,24 +244,27 @@ namespace HTMLZoomTool
         public void ResetFormPosition(ref Preview preview)
         {
 
+            //設定位移單位
+            int previewUpOffset = (int)UpDownOffsetUp.Value;
+
             //在右側顯示
             if (rightSideRadioButton.Checked)
             {
                 //sourcePreview
-                if (preview.formName == "sourcePreview")
+                if (preview.formName == sourcePreviewString)
                 {
-                    preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - PreviewUpOffset);
+                    preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - previewUpOffset);
                 }
                 //resultPreview
                 else
                 {
                     if (sourcePreviewCheckBox.Checked)
                     {
-                        preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - PreviewUpOffset + sourcePreview.Size.Height);
+                        preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - previewUpOffset + sourcePreview.Size.Height);
                     }
                     else
                     {//取代source原本的位置
-                        preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - PreviewUpOffset);
+                        preview.Location = new Point(this.Location.X + this.Size.Width, this.Location.Y - previewUpOffset);
                     }
                 }
             }
@@ -267,7 +272,7 @@ namespace HTMLZoomTool
             else
             {
                 //sourcePreview
-                if (preview.formName == "sourcePreview")
+                if (preview.formName == sourcePreviewString)
                 {
                     preview.Location = new Point(this.Location.X, this.Location.Y + this.Size.Height);
                 }
@@ -305,9 +310,6 @@ namespace HTMLZoomTool
         //開始轉換按鈕
         private void StartButton_Click(object sender, EventArgs e)
         {
-            //設定位移單位
-            PreviewUpOffset = (int)UpDownOffsetUp.Value;
-
             ClosePreviewFormIfExist();
             ConvertHTMLAndShow();
         }
