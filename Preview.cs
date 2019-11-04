@@ -77,7 +77,7 @@ namespace HTMLZoomTool {
             this.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width + widthOffset, webBrowser.Document.Body.ScrollRectangle.Height + heightOffset);
 
             //如果sourecePreview長寬設置完了，且resultPreview存在，重設resultPreview的位置
-            if (this.formName == FirstForm.sourcePreviewString && FirstForm.resultPreview != null && !FirstForm.resultPreview.IsDisposed) {
+            if (this.formName == "sourcePreview" && FirstForm.resultPreview != null && !FirstForm.resultPreview.IsDisposed) {
                 firstForm.ResetFormPosition(ref FirstForm.resultPreview);
             }
 
