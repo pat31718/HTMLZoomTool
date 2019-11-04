@@ -46,35 +46,37 @@ namespace HTMLZoomTool {
             webBrowser.Navigate("about:blank");
             //寫檔
             webBrowser.Document.Write(documentText);
-            //更新
+            //更新，會觸發DocumentCompleted
             webBrowser.Refresh();
         }
         
-        //Document準備完成後 (這樣寫或許不是很好，因為影片會跳轉兩次)
+        //Document 加載完畢，重設比例/位置並顯示
         private void WebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
 
-            //Loading 完成才Show
-            this.Show();
-            
             WebBrowser webBrowserObject = (WebBrowser)sender;
-            //如果此WebBrowser尚未Ready，則DocumentCompleted不生效，直接return
+            //如果此WebBrowser尚未Ready，則DocumentCompleted不生效，直接return 
+            //理論上影片會跳轉一次，可避免尚未ready的時候call這個method也被執行到
             if (webBrowserObject.ReadyState != WebBrowserReadyState.Complete)
                 return;
                         
-            //重設比例
+            //重設比例(並且重設resultPreview的位置)
             ResizeWebBrowser();
+
+            //預覽視窗長寬比例/位置,設定完畢才Show
+            this.Show();
+
             Console.WriteLine("completed:" + webBrowserObject.DocumentText);
         }
 
-        //重新設定長寬比例
+        //重新設定預覽視窗長寬比例
         public void ResizeWebBrowser() {
-            webBrowser.Size = defaultSize;//重設長寬
+            webBrowser.Size = defaultSize;//重設WebBrowser長寬
             webBrowser.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width, webBrowser.Document.Body.ScrollRectangle.Height);
 
-            this.Size = defaultSize;//重設長寬
+            this.Size = defaultSize;//重設視窗長寬
             this.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width + widthOffset, webBrowser.Document.Body.ScrollRectangle.Height + heightOffset);
 
-            //如果sourecePreview長寬設置完了，且resultPreview存在，重設resultPreviw的位置
+            //如果sourecePreview長寬設置完了，且resultPreview存在，重設resultPreview的位置
             if (this.formName == "sourcePreview" && FirstForm.resultPreview != null && !FirstForm.resultPreview.IsDisposed) {
                 firstForm.ResetFormPosition(ref FirstForm.resultPreview);
             }
