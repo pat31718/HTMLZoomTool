@@ -12,7 +12,6 @@ namespace HTMLZoomTool
 {
     public partial class FirstForm : Form
     {
-
         public static Preview sourcePreview;
         public static Preview resultPreview;
 

@@ -62,7 +62,7 @@ namespace HTMLZoomTool {
             //重設比例(並且重設resultPreview的位置)
             ResizeWebBrowser();
 
-            //預覽視窗長寬比例/位置,設定完畢才Show
+            //預覽視窗長寬比例/位置,設定完畢才Show，避免一開始出現在奇怪的位置
             this.Show();
 
             Console.WriteLine("completed:" + webBrowserObject.DocumentText);
