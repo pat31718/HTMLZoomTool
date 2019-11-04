@@ -27,7 +27,7 @@ Language:<br>Traditional Chinese Version Only.<br><br>You can get the last versi
 ## Licence
 It's totally open source freeware, enjoy it.<br>If you have any question, feel free to contact me.<br>
 
-Patrick Chiang<br>pat31718@gmail.com
+Patrick Chiang<br>pat31718+github@gmail.com
 
 
 ###### tags: `Github Open` 
