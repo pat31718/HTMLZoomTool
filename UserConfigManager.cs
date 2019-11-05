@@ -7,9 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace HTMLZoomTool {
+namespace HTMLZoomTool
+{
 
-    enum ConfigType {
+    enum ConfigKey
+    {
         DontRemindImgInfo,
         UseUrl,
         IsYouTubeChecked,
@@ -20,39 +22,41 @@ namespace HTMLZoomTool {
         IsAfterPreviewChecked,
         IsCenterChecked
     };
-    enum ValueType {Bool, Int};
-        
-    class UserConfigManager {
+    enum ValueType { Bool, Int };
+
+    class UserConfigManager
+    {
         private static string userConfigPath = "userConfig.tmp";
-        private static Dictionary<ConfigType, ValueType> userConfigValueType;
-        private static Dictionary<ConfigType, bool> userBoolConfig;
-        private static Dictionary<ConfigType, int> userIntConfig;
+        private static Dictionary<ConfigKey, ValueType> userConfigValueType;
+        private static Dictionary<ConfigKey, object> userConfig;
 
         //設定預設值
-        private static void SetDefaultValueToConfig() {
-            SetConfig(ConfigType.DontRemindImgInfo, false);
-            SetConfig(ConfigType.UseUrl, false);
-            SetConfig(ConfigType.IsYouTubeChecked, true);
-            SetConfig(ConfigType.IsPreViewAtRight, true);
-            SetConfig(ConfigType.UpOffet, 0);
-            SetConfig(ConfigType.ZoomPercentage, 100);
-            SetConfig(ConfigType.IsBeforePreviewChecked, true);
-            SetConfig(ConfigType.IsAfterPreviewChecked, true);
-            SetConfig(ConfigType.IsCenterChecked, false);
+        private static void SetDefaultValueToConfig()
+        {
+            SetConfig(ConfigKey.DontRemindImgInfo, false);
+            SetConfig(ConfigKey.UseUrl, false);
+            SetConfig(ConfigKey.IsYouTubeChecked, true);
+            SetConfig(ConfigKey.IsPreViewAtRight, true);
+            SetConfig(ConfigKey.UpOffet, 0);
+            SetConfig(ConfigKey.ZoomPercentage, 100);
+            SetConfig(ConfigKey.IsBeforePreviewChecked, true);
+            SetConfig(ConfigKey.IsAfterPreviewChecked, true);
+            SetConfig(ConfigKey.IsCenterChecked, false);
         }
 
         //重設並寫檔
-        private static void ResetToDefaultConfig() {
+        private static void ResetToDefaultConfig()
+        {
             SetDefaultValueToConfig();
             WriteConfig();
         }
 
-        private static void InitConfigDictionary() {
+        private static void InitConfigDictionary()
+        {
 
             try {
-                userConfigValueType = new Dictionary<ConfigType, ValueType>();
-                userBoolConfig = new Dictionary<ConfigType, bool>();
-                userIntConfig = new Dictionary<ConfigType, int>();
+                userConfigValueType = new Dictionary<ConfigKey, ValueType>();
+                userConfig = new Dictionary<ConfigKey, object>();
 
                 //如果沒有則使用預設值建立
                 if (!File.Exists(userConfigPath)) {
@@ -67,22 +71,26 @@ namespace HTMLZoomTool {
             catch (Exception ex) {
                 Console.WriteLine(ex.Message + ex.StackTrace);
             }
-                      
+
         }
 
         //建構子
-        public UserConfigManager(){
+        public UserConfigManager()
+        {
             InitConfigDictionary();
         }
 
         //讀檔並存入Dictionary
-        public static void ReadConfig() {
+        public static void ReadConfig()
+        {
             string[] configString = File.ReadAllLines(userConfigPath);
 
             //每一行
             foreach (string line in configString) {
-                ConfigType eachKey = (ConfigType) Enum.Parse(typeof(ConfigType), line.Split(':')[0]);
+
+                ConfigKey eachKey = (ConfigKey)Enum.Parse(typeof(ConfigKey), line.Split(':')[0]);
                 string valueString = line.Split(':')[1];
+
                 bool boolValue;
                 int intValue;
 
@@ -105,55 +113,59 @@ namespace HTMLZoomTool {
             }
         }
 
-        
+
         //取得configValue, 使用上須使用Try Catch
-        public static Object GetConfigValueByKey(ConfigType configType) {
+        public static object GetConfigValueByKey(ConfigKey configKey)
+        {
+            object returnValue = null;            
 
-            Object returnValue = null;
-
-            //檢查ValueType是否存在Key
-            if (!userConfigValueType.ContainsKey(configType)) {
-                MessageBox.Show("無法讀取設定值ValueType:" + configType + "，重設為預設值");
+            //檢查ValueType是否存在Key，不存在就設為預設值
+            if (!userConfigValueType.ContainsKey(configKey)) {
+                MessageBox.Show("無法讀取設定值ValueType:" + configKey + "，重設為預設值");
 
                 //重設預設值
                 ResetToDefaultConfig();
             }
-            else {
-                //Bool
-                if (userConfigValueType[configType] == ValueType.Bool) {
-                    //檢查BoolConfig是否存在Key
-                    if (!userBoolConfig.ContainsKey(configType)) {
-                        MessageBox.Show("無法讀取設定值userBoolConfig:" + configType +  "，重設為預設值");
 
-                        //重設預設值
-                        ResetToDefaultConfig();
-                    }
-                    else {
-                        returnValue = (Object)userBoolConfig[configType];
-                    }
+            //Bool
+            if (userConfigValueType[configKey] == ValueType.Bool) {
+                //檢查userConfig是否存在Key
+                if (!userConfig.ContainsKey(configKey)) {
+                    MessageBox.Show("無法讀取設定值userConfig:" + configKey + "，重設為預設值");
+
+                    //重設預設值
+                    ResetToDefaultConfig();
                 }
-                //Int
-                else if (userConfigValueType[configType] == ValueType.Int) {
-                    if (!userIntConfig.ContainsKey(configType)) {
-                        MessageBox.Show("無法讀取設定值userIntConfig:" + configType + "，重設為預設值");
-                        //重設預設值
-                        ResetToDefaultConfig();
-                    }
-                    else {
-                        returnValue = (Object)userIntConfig[configType];
-                    }
+                else {
+                    returnValue = (bool)userConfig[configKey];
+                }
+            }
+            //Int
+            else if (userConfigValueType[configKey] == ValueType.Int) {
+                //檢查userConfig是否存在Key
+                if (!userConfig.ContainsKey(configKey)) {
+                    MessageBox.Show("無法讀取設定值userConfig:" + configKey + "，重設為預設值");
+
+                    //重設預設值
+                    ResetToDefaultConfig();
+                }
+                else {
+                    returnValue = (int)userConfig[configKey];
+
                 }
             }
             return returnValue;
         }
 
-        public static void SetAndWriteConfig<T>(ConfigType configType, T configValue) {
+        public static void SetAndWriteConfig<T>(ConfigKey configType, T configValue)
+        {
             SetConfig(configType, configValue);
             WriteConfig();
         }
 
-        public static void SetConfig<T>(ConfigType configType, T configValue) {
-            
+        public static void SetConfig<T>(ConfigKey configType, T configValue)
+        {
+
             //Bool
             if (configValue is bool) {
 
@@ -161,14 +173,7 @@ namespace HTMLZoomTool {
                     userConfigValueType.Add(configType, ValueType.Bool);
                 }
 
-                //原本沒有這個config，直接加入直接加入Dictionary
-                if (!userBoolConfig.ContainsKey(configType)) {                    
-                    userBoolConfig.Add(configType, (bool)(Object)configValue);
-                }
-                else {
-                    //有則更新
-                    userBoolConfig[configType] = (bool)(Object)configValue;
-                }
+
             }
             //Int
             else if (configValue is int) {
@@ -177,26 +182,24 @@ namespace HTMLZoomTool {
                     userConfigValueType.Add(configType, ValueType.Int);
                 }
 
-                //原本沒有這個config，直接加入Dictionary
-                if (!userIntConfig.ContainsKey(configType)) {
-                    userIntConfig.Add(configType, (int)(Object)configValue);
-                }
-                else {
-                    //有則更新
-                    userIntConfig[configType] = (int)(Object)configValue;
-                }
-
             }
+
+            //原本沒有這個config，直接加入直接加入Dictionary
+            if (!userConfig.ContainsKey(configType)) {
+                userConfig.Add(configType, configValue);
+            }
+            else {
+                //有則更新
+                userConfig[configType] = configValue;
+            }
+
         }
 
         //寫進去Config
-        private static void WriteConfig() {
+        private static void WriteConfig()
+        {
             StringBuilder sb = new StringBuilder();
-            foreach (KeyValuePair<ConfigType, bool> item in userBoolConfig) {
-                sb.AppendLine(item.Key.ToString() + ":" + item.Value.ToString());
-            }
-
-            foreach (KeyValuePair<ConfigType, int> item in userIntConfig) {
+            foreach (KeyValuePair<ConfigKey, object> item in userConfig) {
                 sb.AppendLine(item.Key.ToString() + ":" + item.Value.ToString());
             }
 

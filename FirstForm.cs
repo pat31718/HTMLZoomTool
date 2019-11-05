@@ -41,24 +41,24 @@ namespace HTMLZoomTool
         private void SettingByConfig()
         {
 
-            urlCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.UseUrl);
+            urlCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigKey.UseUrl);
             //根據有沒有check來變換其他控制項之Enable
             UrlCheckBox_CheckedChanged(new Object(), new EventArgs());
 
-            youtubeRadioButton.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsYouTubeChecked);
-            imgRadioButton.Checked = !(bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsYouTubeChecked);
+            youtubeRadioButton.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsYouTubeChecked);
+            imgRadioButton.Checked = !(bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsYouTubeChecked);
 
-            rightSideRadioButton.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsPreViewAtRight);
-            downRadioButton.Checked = !(bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsPreViewAtRight);
+            rightSideRadioButton.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsPreViewAtRight);
+            downRadioButton.Checked = !(bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsPreViewAtRight);
 
             //Proview向上偏移
-            UpDownOffsetUp.Value = (int)UserConfigManager.GetConfigValueByKey(ConfigType.UpOffet);
+            UpDownOffsetUp.Value = (int)UserConfigManager.GetConfigValueByKey(ConfigKey.UpOffet);
 
-            zoomComboBox.Text = UserConfigManager.GetConfigValueByKey(ConfigType.ZoomPercentage).ToString() + "%";
+            zoomComboBox.Text = UserConfigManager.GetConfigValueByKey(ConfigKey.ZoomPercentage).ToString() + "%";
 
-            sourcePreviewCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsBeforePreviewChecked);
-            resultPreviewCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsAfterPreviewChecked);
-            centerCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigType.IsCenterChecked);
+            sourcePreviewCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsBeforePreviewChecked);
+            resultPreviewCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsAfterPreviewChecked);
+            centerCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsCenterChecked);
 
         }
 
@@ -330,7 +330,7 @@ namespace HTMLZoomTool
 
         private void UpDownOffsetUp_ValueChanged(object sender, EventArgs e)
         {
-            UserConfigManager.SetAndWriteConfig(ConfigType.UpOffet, (int)UpDownOffsetUp.Value);
+            UserConfigManager.SetAndWriteConfig(ConfigKey.UpOffet, (int)UpDownOffsetUp.Value);
         }
 
         //滑鼠點擊則全選
@@ -370,27 +370,27 @@ namespace HTMLZoomTool
             string tempString = zoomComboBox.Text;
             int zoomPercentageInt = Convert.ToInt32(tempString.Split('%')[0]);
 
-            UserConfigManager.SetAndWriteConfig(ConfigType.ZoomPercentage, zoomPercentageInt);
+            UserConfigManager.SetAndWriteConfig(ConfigKey.ZoomPercentage, zoomPercentageInt);
         }
 
         private void sourcePreviewCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            UserConfigManager.SetAndWriteConfig(ConfigType.IsBeforePreviewChecked, sourcePreviewCheckBox.Checked);
+            UserConfigManager.SetAndWriteConfig(ConfigKey.IsBeforePreviewChecked, sourcePreviewCheckBox.Checked);
         }
 
         private void resultPreviewCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            UserConfigManager.SetAndWriteConfig(ConfigType.IsAfterPreviewChecked, resultPreviewCheckBox.Checked);
+            UserConfigManager.SetAndWriteConfig(ConfigKey.IsAfterPreviewChecked, resultPreviewCheckBox.Checked);
         }
 
         private void CenterCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            UserConfigManager.SetAndWriteConfig(ConfigType.IsCenterChecked, centerCheckBox.Checked);
+            UserConfigManager.SetAndWriteConfig(ConfigKey.IsCenterChecked, centerCheckBox.Checked);
         }
 
         private void RightSideRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            UserConfigManager.SetAndWriteConfig(ConfigType.IsPreViewAtRight, rightSideRadioButton.Checked);
+            UserConfigManager.SetAndWriteConfig(ConfigKey.IsPreViewAtRight, rightSideRadioButton.Checked);
         }
 
         //預覽視窗在下方時，停用位移
@@ -413,7 +413,7 @@ namespace HTMLZoomTool
             youtubeRadioButton.Enabled = isChecked;
             imgRadioButton.Enabled = isChecked;
 
-            UserConfigManager.SetAndWriteConfig(ConfigType.UseUrl, isChecked);
+            UserConfigManager.SetAndWriteConfig(ConfigKey.UseUrl, isChecked);
 
         }
 
@@ -427,7 +427,7 @@ namespace HTMLZoomTool
 
             if (imgRadioButton.Checked && imgRadioButton.Enabled)
             {
-                if (!(bool)UserConfigManager.GetConfigValueByKey(ConfigType.DontRemindImgInfo))
+                if (!(bool)UserConfigManager.GetConfigValueByKey(ConfigKey.DontRemindImgInfo))
                 {
                     FirstForm_ImgCheckInfo firstForm_ImgCheckInfo = new FirstForm_ImgCheckInfo();
 
@@ -445,14 +445,14 @@ namespace HTMLZoomTool
                         result = false;
                     }
 
-                    UserConfigManager.SetAndWriteConfig(ConfigType.DontRemindImgInfo, result);
+                    UserConfigManager.SetAndWriteConfig(ConfigKey.DontRemindImgInfo, result);
                 }
             }
         }
 
         private void YoutubeRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            UserConfigManager.SetAndWriteConfig(ConfigType.IsYouTubeChecked, youtubeRadioButton.Checked);
+            UserConfigManager.SetAndWriteConfig(ConfigKey.IsYouTubeChecked, youtubeRadioButton.Checked);
         }
 
         #endregion ----------------------------------------------------------
