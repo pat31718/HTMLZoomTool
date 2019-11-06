@@ -12,7 +12,7 @@ namespace HTMLZoomTool
 
     enum ConfigKey
     {
-        DontRemindImgInfo,
+        IsImgInfoRemind,
         UseUrl,
         IsYouTubeChecked,
         IsPreViewAtRight,

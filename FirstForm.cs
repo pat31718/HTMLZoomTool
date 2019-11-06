@@ -33,7 +33,7 @@ namespace HTMLZoomTool
         //設定預設值
         private static void SetDefaultValueToConfig()
         {
-            UserConfigManager.SetConfig(ConfigKey.DontRemindImgInfo, false);
+            UserConfigManager.SetConfig(ConfigKey.IsImgInfoRemind, true);
             UserConfigManager.SetConfig(ConfigKey.UseUrl, false);
             UserConfigManager.SetConfig(ConfigKey.IsYouTubeChecked, true);
             UserConfigManager.SetConfig(ConfigKey.IsPreViewAtRight, true);
@@ -431,7 +431,7 @@ namespace HTMLZoomTool
 
             if (imgRadioButton.Checked && imgRadioButton.Enabled)
             {
-                if (!(bool)UserConfigManager.GetConfigValueByKey(ConfigKey.DontRemindImgInfo))
+                if ((bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsImgInfoRemind))
                 {
                     FirstForm_ImgCheckInfo firstForm_ImgCheckInfo = new FirstForm_ImgCheckInfo();
 
@@ -439,17 +439,17 @@ namespace HTMLZoomTool
                     firstForm_ImgCheckInfo.Location = new Point(this.Location.X + this.Size.Width / 4, this.Location.Y + this.Size.Height / 4);//跳窗位置
                     DialogResult dontRemindImgInto = firstForm_ImgCheckInfo.ShowDialog();
 
-                    bool result;
+                    bool NoNeedToRemind;
                     if (dontRemindImgInto == DialogResult.Yes)
                     {
-                        result = true;
+                        NoNeedToRemind = true;
                     }
                     else
                     {
-                        result = false;
+                        NoNeedToRemind = false;
                     }
 
-                    UserConfigManager.SetAndWriteConfig(ConfigKey.DontRemindImgInfo, result);
+                    UserConfigManager.SetAndWriteConfig(ConfigKey.IsImgInfoRemind, !NoNeedToRemind);
                 }
             }
         }
