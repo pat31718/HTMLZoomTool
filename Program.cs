@@ -13,8 +13,6 @@ namespace HTMLZoomTool {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            UserConfigManager userConfigManager = new UserConfigManager();
             Application.Run(new FirstForm());           
         }
     }

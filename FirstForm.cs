@@ -18,32 +18,28 @@ namespace HTMLZoomTool
         //固定的字串
         public static string sourcePreviewString = "sourcePreview";
         public static string resultPreviewString = "resultPreview";
-        
-        public FirstForm()
-        {
-            InitializeComponent();
-        }
 
-        private void FirstForm_Load(object sender, EventArgs e)
+        //設定預設值
+        private static void SetDefaultValueToConfig()
         {
-            try
-            {
-                SettingByConfig();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message + ex.StackTrace);
-            }
-
+            UserConfigManager.SetConfig(ConfigKey.DontRemindImgInfo, false);
+            UserConfigManager.SetConfig(ConfigKey.UseUrl, false);
+            UserConfigManager.SetConfig(ConfigKey.IsYouTubeChecked, true);
+            UserConfigManager.SetConfig(ConfigKey.IsPreViewAtRight, true);
+            UserConfigManager.SetConfig(ConfigKey.UpOffet, 0);
+            UserConfigManager.SetConfig(ConfigKey.ZoomPercentage, 100);
+            UserConfigManager.SetConfig(ConfigKey.IsBeforePreviewChecked, true);
+            UserConfigManager.SetConfig(ConfigKey.IsAfterPreviewChecked, true);
+            UserConfigManager.SetConfig(ConfigKey.IsCenterChecked, false);
         }
 
         //依照使用者設定初始化整個版面
-        private void SettingByConfig()
+        private void SettingFirstFormByConfig()
         {
 
             urlCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigKey.UseUrl);
             //根據有沒有check來變換其他控制項之Enable
-            UrlCheckBox_CheckedChanged(new Object(), new EventArgs());
+            UrlCheckBox_CheckedChanged(this, new EventArgs());
 
             youtubeRadioButton.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsYouTubeChecked);
             imgRadioButton.Checked = !(bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsYouTubeChecked);
@@ -61,6 +57,29 @@ namespace HTMLZoomTool
             centerCheckBox.Checked = (bool)UserConfigManager.GetConfigValueByKey(ConfigKey.IsCenterChecked);
 
         }
+
+        public FirstForm()
+        {
+            InitializeComponent();
+
+            //委派設定預設值
+            UserConfigManager.SetDefaultValueToConfigHandler = new UserConfigManager.SetDefaultValueToConfigEvent(SetDefaultValueToConfig);
+            //初始化設定預設值
+            UserConfigManager.InitConfigDictionary();
+        }
+
+        private void FirstForm_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                SettingFirstFormByConfig();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + ex.StackTrace);
+            }
+
+        }       
 
         //主要的轉換Method
         private void ConvertHTMLAndShow()
