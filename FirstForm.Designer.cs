@@ -71,9 +71,9 @@
             this.label1.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label1.Location = new System.Drawing.Point(12, 122);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(117, 20);
+            this.label1.Size = new System.Drawing.Size(169, 20);
             this.label1.TabIndex = 1;
-            this.label1.Text = "欲轉換的HTML";
+            this.label1.Text = "請貼上欲轉換的HTML:";
             // 
             // label2
             // 
@@ -81,9 +81,9 @@
             this.label2.Font = new System.Drawing.Font("微軟正黑體", 12F);
             this.label2.Location = new System.Drawing.Point(12, 285);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(117, 20);
+            this.label2.Size = new System.Drawing.Size(121, 20);
             this.label2.TabIndex = 3;
-            this.label2.Text = "轉換後的HTML";
+            this.label2.Text = "轉換後的HTML:";
             // 
             // ResultHTMLRichTextBox
             // 
@@ -300,12 +300,12 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(457, 193);
+            this.label7.Location = new System.Drawing.Point(448, 193);
             this.label7.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(109, 12);
+            this.label7.Size = new System.Drawing.Size(121, 12);
             this.label7.TabIndex = 24;
-            this.label7.Text = "清除欲轉換的HTML";        
+            this.label7.Text = "清除網址及HTML語法";
             // 
             // label8
             // 
@@ -323,9 +323,9 @@
             this.label9.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label9.Location = new System.Drawing.Point(12, 27);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(152, 20);
+            this.label9.Size = new System.Drawing.Size(204, 20);
             this.label9.TabIndex = 27;
-            this.label9.Text = "YouTube /圖片網址";
+            this.label9.Text = "請貼上YouTube /圖片網址:";
             // 
             // urlRichTextBox
             // 
