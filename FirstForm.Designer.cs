@@ -24,10 +24,10 @@
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FirstForm));
-            this.SourceHTML = new System.Windows.Forms.RichTextBox();
+            this.SourceHTMLRichTextBox = new System.Windows.Forms.RichTextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.ResultHTML = new System.Windows.Forms.RichTextBox();
+            this.ResultHTMLRichTextBox = new System.Windows.Forms.RichTextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.zoomComboBox = new System.Windows.Forms.ComboBox();
             this.resultPreviewCheckBox = new System.Windows.Forms.CheckBox();
@@ -57,13 +57,13 @@
             this.flowLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // SourceHTML
+            // SourceHTMLRichTextBox
             // 
-            this.SourceHTML.Location = new System.Drawing.Point(16, 145);
-            this.SourceHTML.Name = "SourceHTML";
-            this.SourceHTML.Size = new System.Drawing.Size(423, 128);
-            this.SourceHTML.TabIndex = 0;
-            this.SourceHTML.Text = "";
+            this.SourceHTMLRichTextBox.Location = new System.Drawing.Point(16, 145);
+            this.SourceHTMLRichTextBox.Name = "SourceHTMLRichTextBox";
+            this.SourceHTMLRichTextBox.Size = new System.Drawing.Size(423, 128);
+            this.SourceHTMLRichTextBox.TabIndex = 0;
+            this.SourceHTMLRichTextBox.Text = "";
             // 
             // label1
             // 
@@ -85,14 +85,14 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "轉換後的HTML";
             // 
-            // ResultHTML
+            // ResultHTMLRichTextBox
             // 
-            this.ResultHTML.Location = new System.Drawing.Point(16, 308);
-            this.ResultHTML.Name = "ResultHTML";
-            this.ResultHTML.Size = new System.Drawing.Size(423, 141);
-            this.ResultHTML.TabIndex = 2;
-            this.ResultHTML.Text = "";
-            this.ResultHTML.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ResultHTML_MouseClick);
+            this.ResultHTMLRichTextBox.Location = new System.Drawing.Point(16, 308);
+            this.ResultHTMLRichTextBox.Name = "ResultHTMLRichTextBox";
+            this.ResultHTMLRichTextBox.Size = new System.Drawing.Size(423, 141);
+            this.ResultHTMLRichTextBox.TabIndex = 2;
+            this.ResultHTMLRichTextBox.Text = "";
+            this.ResultHTMLRichTextBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ResultHTML_MouseClick);
             // 
             // label3
             // 
@@ -305,7 +305,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(109, 12);
             this.label7.TabIndex = 24;
-            this.label7.Text = "清除欲轉換的HTML";
+            this.label7.Text = "清除欲轉換的HTML";        
             // 
             // label8
             // 
@@ -336,7 +336,6 @@
             this.urlRichTextBox.TabIndex = 28;
             this.urlRichTextBox.Text = "";
             this.urlRichTextBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.UrlRichTextBox_MouseClick);
-            this.urlRichTextBox.TextChanged += new System.EventHandler(this.UrlRichTextBox_TextChanged);
             // 
             // urlCheckBox
             // 
@@ -389,9 +388,9 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.cleanButton);
-            this.Controls.Add(this.ResultHTML);
+            this.Controls.Add(this.ResultHTMLRichTextBox);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.SourceHTML);
+            this.Controls.Add(this.SourceHTMLRichTextBox);
             this.Controls.Add(this.startButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -414,10 +413,10 @@
 
         #endregion
 
-        private System.Windows.Forms.RichTextBox SourceHTML;
+        private System.Windows.Forms.RichTextBox SourceHTMLRichTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.RichTextBox ResultHTML;
+        private System.Windows.Forms.RichTextBox ResultHTMLRichTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox zoomComboBox;
         private System.Windows.Forms.CheckBox resultPreviewCheckBox;
