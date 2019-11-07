@@ -74,11 +74,11 @@ namespace HTMLZoomTool {
         //重新設定預覽視窗長寬比例
         public void ResizeWebBrowser() {
 
-            //webBrowser.Size = defaultSize;//重設WebBrowser長寬
-            //webBrowser.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width , webBrowser.Document.Body.ScrollRectangle.Height);
+            int browserWidth = webBrowser.Document.Body.ScrollRectangle.Width;
+            int browserHeight = webBrowser.Document.Body.ScrollRectangle.Height;
 
             this.Size = defaultSize;//重設視窗長寬
-            this.Size = new Size(webBrowser.Document.Body.ScrollRectangle.Width + widthOffset, webBrowser.Document.Body.ScrollRectangle.Height + heightOffset);
+            this.Size = new Size(browserWidth + widthOffset, browserHeight + heightOffset);
 
             //如果sourecePreview長寬設置完了，且resultPreview存在，重設resultPreview的位置
             if (this.formName == FirstForm.sourcePreviewString && FirstForm.resultPreview != null && !FirstForm.resultPreview.IsDisposed) {

@@ -168,7 +168,7 @@ namespace HTMLZoomTool
             {
                 url = "<img src = '" +
                     url +
-                    "' width = '640' height = '480' /> ";
+                    "' /> ";
             }
             else
             {
@@ -182,13 +182,10 @@ namespace HTMLZoomTool
         private string GetZoomHTML(string originHTML, int zoom)
         {
 
-            //確定有width及height後開始置換
-            if (originHTML.IndexOf("width") != -1 && originHTML.IndexOf("height") != -1)
-            {
-
-                try {
-
-                    #region width
+            try {
+                #region width
+                if (originHTML.IndexOf("width") != -1) {
+                    
                     int startIndex = originHTML.IndexOf("width");
                     //尋找左邊的'
                     int leftIndex = originHTML.IndexOf("'", startIndex);
@@ -205,39 +202,36 @@ namespace HTMLZoomTool
                         originHTML.Substring(0, leftIndex) +
                         "'" + zoomInt.ToString() + "'" +
                         originHTML.Substring(rightIndex + 1);
-                    #endregion
+                }
+                #endregion
 
-                    #region height
-                    startIndex = originHTML.IndexOf("height");
+                #region height
+                if (originHTML.IndexOf("height") != -1) {
+                    int startIndex = originHTML.IndexOf("height");
                     //尋找左邊的'
-                    leftIndex = originHTML.IndexOf("'", startIndex);
-                    rightIndex = originHTML.IndexOf("'", leftIndex + 1);
+                    int leftIndex = originHTML.IndexOf("'", startIndex);
+                    int rightIndex = originHTML.IndexOf("'", leftIndex + 1);
 
                     string originHeightString = originHTML.Substring(leftIndex + 1, rightIndex - (leftIndex + 1));
-                    originFloat = Convert.ToSingle(originHeightString);
+                    float originFloat = Convert.ToSingle(originHeightString);
 
-                    zoomfloat = originFloat * ((float)zoom / 100);
-                    zoomInt = Convert.ToInt32(zoomfloat);
+                    float zoomfloat = originFloat * ((float)zoom / 100);
+                    int zoomInt = Convert.ToInt32(zoomfloat);
 
                     //更改為縮放後的height
                     originHTML =
                         originHTML.Substring(0, leftIndex) +
                         "'" + zoomInt.ToString() + "'" +
                         originHTML.Substring(rightIndex + 1);
-                    #endregion
-                }
-                catch (Exception ex) {
-                    MessageBox.Show(ex.Message + ex.StackTrace);
-                }
-
+                }                
+                #endregion
             }
-            else
-            {
-                MessageBox.Show("請再次確認\"width\"及\"height\"是否在語法中:\n" + originHTML);
-                originHTML = string.Empty;
+            catch (Exception ex) {
+                MessageBox.Show(ex.Message + ex.StackTrace);
             }
             return originHTML;
         }
+                
 
         public void ShowPreview(ref Preview preview, string formName, string htmlText)
         {
