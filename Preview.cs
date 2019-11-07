@@ -27,6 +27,9 @@ namespace HTMLZoomTool {
         private static int defaultHeight = 50;
         private static Size defaultSize = new Size(defaultWidth, defaultHeight);
 
+        //是否是圖片網址用來先載入一次的Result Preview
+        public bool isImageLoading = false;
+
         public Preview(string formName, FirstForm firstForm) {
             InitializeComponent();
             webBrowser = this.webBrowser1;
@@ -66,7 +69,10 @@ namespace HTMLZoomTool {
             ResizeWebBrowser();
 
             //預覽視窗長寬比例/位置,設定完畢才Show，避免一開始出現在奇怪的位置
-            this.Show();
+            //如果此為圖片網址取得結果用的showPreview，則不Show
+            if (!isImageLoading) {
+                this.Show();
+            }   
 
             Console.WriteLine("completed:" + webBrowserObject.DocumentText);
         }
@@ -74,15 +80,23 @@ namespace HTMLZoomTool {
         //重新設定預覽視窗長寬比例
         public void ResizeWebBrowser() {
 
-            int browserWidth = webBrowser.Document.Body.ScrollRectangle.Width;
-            int browserHeight = webBrowser.Document.Body.ScrollRectangle.Height;
+            int imageWidth = webBrowser.Document.Body.ScrollRectangle.Width;
+            int imageHeight = webBrowser.Document.Body.ScrollRectangle.Height;
+
+            Console.WriteLine("BrowserSize:" + imageWidth + "x" + imageHeight);
 
             this.Size = defaultSize;//重設視窗長寬
-            this.Size = new Size(browserWidth + widthOffset, browserHeight + heightOffset);
+            this.Size = new Size(imageWidth + widthOffset, imageHeight + heightOffset);
 
             //如果sourecePreview長寬設置完了，且resultPreview存在，重設resultPreview的位置
             if (this.formName == FirstForm.sourcePreviewString && FirstForm.resultPreview != null && !FirstForm.resultPreview.IsDisposed) {
                 firstForm.ResetFormPosition(ref FirstForm.resultPreview);
+            }
+
+            //如果是ResultPreview用來先讀取一次圖片長寬用的，則呼叫重設長寬專用的method
+            if (isImageLoading) {
+                isImageLoading = false;
+                firstForm.ChangeResultHTMLAndPreviewForImageURL(imageWidth, imageHeight);
             }
 
         }

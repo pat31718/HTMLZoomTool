@@ -119,26 +119,61 @@ namespace HTMLZoomTool
                 SourceHTMLRichTextBox.Text = string.Empty;
                 ResultHTMLRichTextBox.Text = string.Empty;
             }
-
+            
             //置中語法
             if (centerCheckBox.Checked)
             {
                 ResultHTMLRichTextBox.Text = "<p align = 'center'>" + ResultHTMLRichTextBox.Text + "</p>";
             }
 
-            //預覽畫面必須有結果才會更新
-            if (ResultHTMLRichTextBox.Text != string.Empty)
+            //必須有值才會處理
+            if (SourceHTMLRichTextBox.Text != string.Empty)
             {
-
+                
                 if (sourcePreviewCheckBox.Checked)
                 {
-                    ShowPreview(ref sourcePreview, sourcePreviewString, SourceHTMLRichTextBox.Text);
+                    ShowPreview(ref sourcePreview, sourcePreviewString, SourceHTMLRichTextBox.Text, false);
                 }
-                if (resultPreviewCheckBox.Checked)
+
+                //如果是圖片類的則需要先Loading過一次，取得width，並重新覆蓋掉HTML語法
+                //會由ChangeResultHTMLForImageURL在最後決定要不要顯示resultPreview
+                if (urlCheckBox.Checked && imgRadioButton.Checked) {
+                    ShowPreview(ref resultPreview, resultPreviewString, ResultHTMLRichTextBox.Text, true);
+                }
+                else if (resultPreviewCheckBox.Checked)
                 {
-                    ShowPreview(ref resultPreview, resultPreviewString, ResultHTMLRichTextBox.Text);
+                    ShowPreview(ref resultPreview, resultPreviewString, ResultHTMLRichTextBox.Text , false);
                 }
             }
+        }
+
+        //圖片網址需要先讀取一次網頁，取得寬度後用來變更HTML，所以其實需要讀兩次圖片
+        public void ChangeResultHTMLAndPreviewForImageURL(int imageWidth, int imageHeight) {
+
+            string afterResultHTML = "<img width = '" + imageWidth.ToString() + "' src = '" + urlRichTextBox.Text + "' />";
+            
+            //取得要縮放的百分比
+            int zoom = Convert.ToInt32(zoomComboBox.Text.Split('%')[0]);
+            ResultHTMLRichTextBox.Text = GetZoomHTML(afterResultHTML, zoom);
+
+            #region Width
+            float originFloat = Convert.ToSingle(imageWidth);
+            float zoomfloat = originFloat * ((float)zoom / 100);
+            int zoomInt = Convert.ToInt32(zoomfloat);
+            resultPreview.Width = zoomInt;
+            #endregion
+
+            #region Height
+            originFloat = Convert.ToSingle(imageHeight);
+            zoomfloat = originFloat * ((float)zoom / 100);
+            zoomInt = Convert.ToInt32(zoomfloat);
+            resultPreview.Height = zoomInt;
+            #endregion
+
+            if (resultPreviewCheckBox.Checked) {
+                ShowPreview(ref resultPreview, resultPreviewString, ResultHTMLRichTextBox.Text, false);
+            }
+
         }
 
         private string GetYoutubeURL_ToHTML(string url)
@@ -232,8 +267,8 @@ namespace HTMLZoomTool
             return originHTML;
         }
                 
-
-        public void ShowPreview(ref Preview preview, string formName, string htmlText)
+        //isImageLoading是用來預載圖片用的
+        public void ShowPreview(ref Preview preview, string formName, string htmlText, bool isImageLoading)
         {
 
             //加上網頁tag，須注意meta http-equiv必須有值，才能夠顯示影片及圖片
@@ -247,6 +282,9 @@ namespace HTMLZoomTool
 
             //依據不同的preview重設顯示位置            
             ResetFormPosition(ref preview);
+
+            //設定是否為圖片預載
+            preview.isImageLoading = isImageLoading;
 
             //寫入Document並更新網頁
             preview.WriteWebBrowserDocumentAndRefresh(htmlText);
@@ -311,8 +349,9 @@ namespace HTMLZoomTool
         //關閉預覽畫面，如果存在的話
         private void ClosePreviewFormIfExist()
         {
-            if (sourcePreview != null && !sourcePreview.IsDisposed)
+            if (sourcePreview != null && !sourcePreview.IsDisposed) {
                 sourcePreview.Close();
+            }                
             if (resultPreview != null && !resultPreview.IsDisposed)
             {
                 resultPreview.Close();
